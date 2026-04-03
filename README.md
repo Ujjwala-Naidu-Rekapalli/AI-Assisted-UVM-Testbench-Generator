@@ -1,40 +1,72 @@
 # AI-Assisted UVM Testbench Generator
 
-A from-scratch framework that generates a runnable UVM testbench skeleton from an RTL module and improves stimulus using an AI-guided coverage loop.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](#quick-start)
+[![UVM](https://img.shields.io/badge/SystemVerilog-UVM-green.svg)](#generated-artifacts)
+[![Status](https://img.shields.io/badge/Status-Portfolio%20Ready-success.svg)](#project-highlights)
 
-## What it does
+Generate a **UVM testbench scaffold automatically from RTL** and improve stimulus quality with an AI-guided loop.
 
-**Input:** RTL module (ALU/cache/pipeline-stage style modules).
+- **Input:** RTL module (ALU / cache block / pipeline stage)
+- **Output:** Auto-generated UVM environment + sequence planning + risk summary
+- **AI layer:** Python modules for sequence generation, coverage-driven improvement, and bug-risk prioritization
 
-**Output:** Auto-generated UVM testbench package with:
-- interface
-- sequence item
-- sequence
-- driver
-- monitor
-- agent
-- env
-- scoreboard
-- test
-- top testbench
+---
 
-It also provides a Python AI layer that supports:
-- **Auto sequence generation**
-- **Coverage-driven improvement loop**
-- **Bug prediction/prioritization**
+## Project Highlights
 
-## Architecture
+✅ Auto sequence generation (heuristic by default, optional LLM mode)  
+✅ Coverage-driven improvement loop from coverage-hole JSON  
+✅ Bug prediction / prioritization report  
+✅ End-to-end CLI flow and test coverage  
+✅ Portfolio-ready structure for GitHub showcase
 
-- `tools/generate_uvm.py` – main CLI orchestrator.
-- `ai/rtl_parser.py` – lightweight SystemVerilog module parser.
-- `ai/sequence_generator.py` – LLM-backed or heuristic sequence strategy.
-- `ai/coverage_loop.py` – iterative optimization loop driven by coverage reports.
-- `ai/bug_predictor.py` – simple ML model + risk ranking fallback.
-- `ai/uvm_renderer.py` – SystemVerilog UVM emitter for interface/package/top files.
-- `examples/rtl/alu.sv` – sample RTL target.
-- `generated_tb/` – output folder.
+---
 
-## Quick start
+## Features
+
+### 1) Auto Sequence Generation
+- Parses RTL port signatures and builds randomized smoke vectors + corner vectors.
+- Detects opcode-like control signals (`op`, `opcode`, `sel`, `cmd`) and creates directed sweeps.
+- Optional OpenAI API mode can synthesize scenario vectors when `OPENAI_API_KEY` is set.
+
+### 2) Coverage-Driven Improvement Loop
+- Accepts coverage JSON containing uncovered bins/holes.
+- Iteratively appends targeted vectors to close known holes.
+- Produces iteration and projected coverage metrics in `generation_summary.json`.
+
+### 3) Bug Prediction / Prioritization
+- Computes structural risk features from module I/O.
+- Produces `LOW` / `MEDIUM` / `HIGH` priority with rationale.
+- Helps triage what to verify first in constrained schedules.
+
+---
+
+## Repository Layout
+
+```text
+.
+├── ai/
+│   ├── rtl_parser.py
+│   ├── sequence_generator.py
+│   ├── coverage_loop.py
+│   ├── bug_predictor.py
+│   ├── uvm_renderer.py
+│   └── models.py
+├── tools/
+│   └── generate_uvm.py
+├── examples/
+│   ├── rtl/alu.sv
+│   └── coverage/alu_cov.json
+├── generated_tb/
+│   └── alu_tb/
+├── tests/
+│   └── test_parser_and_build.py
+└── README.md
+```
+
+---
+
+## Quick Start
 
 ```bash
 python3 -m venv .venv
@@ -44,66 +76,67 @@ pip install -r requirements.txt
 python tools/generate_uvm.py \
   --rtl examples/rtl/alu.sv \
   --out generated_tb/alu_tb \
-  --module alu
-```
-
-This generates a complete UVM package and a JSON run summary.
-
-## Optional LLM integration
-
-Set these environment variables to enable LLM-generated directed scenarios:
-
-```bash
-export OPENAI_API_KEY="..."
-export OPENAI_MODEL="gpt-4o-mini"
-```
-
-If no API key is present, the system falls back to deterministic heuristic scenario generation.
-
-If you enable LLM mode, install the OpenAI SDK separately (`pip install openai`).
-
-## Coverage loop input format
-
-The coverage loop consumes a JSON report like:
-
-```json
-{
-  "total_coverage": 71.5,
-  "holes": [
-    {"signal": "op", "bin": "3", "hits": 0},
-    {"signal": "a", "bin": "max", "hits": 1}
-  ]
-}
-```
-
-Use:
-
-```bash
-python tools/generate_uvm.py \
-  --rtl examples/rtl/alu.sv \
-  --out generated_tb/alu_tb \
   --module alu \
   --coverage-report examples/coverage/alu_cov.json
 ```
 
-## Bug prediction
-
-The bug predictor estimates risk from static features:
-- input/output width balance
-- operation-port complexity
-- number of control-like signals
-- sequential vs combinational style hints
-
-It outputs priority buckets (`HIGH`, `MEDIUM`, `LOW`) and rationale for triage.
-
-## Testing
+Run tests:
 
 ```bash
 pytest -q
-python tools/generate_uvm.py --rtl examples/rtl/alu.sv --out generated_tb/alu_tb --module alu
 ```
 
-## Notes
+---
 
-- Generated testbench is UVM-compliant scaffold ready for simulator integration.
-- The framework is simulator-agnostic and does not require vendor tool lock-in.
+## Generated Artifacts
+
+For module `alu`, the tool emits:
+
+- `alu_if.sv` – interface + clocking blocks
+- `alu_tb_pkg.sv` – seq_item, sequence, driver, monitor, scoreboard, agent, env, test
+- `alu_tb_top.sv` – DUT + interface hookup + `run_test`
+- `run_manifest.txt` – compile/run checklist
+- `generation_summary.json` – sequence stats + coverage loop + bug risk
+
+---
+
+## Optional LLM Mode
+
+Enable with:
+
+```bash
+export OPENAI_API_KEY="<your_key>"
+export OPENAI_MODEL="gpt-4o-mini"
+pip install openai
+```
+
+If key or SDK is unavailable, the generator automatically uses offline heuristics.
+
+---
+
+## Why This Project is Resume-Worthy
+
+This project demonstrates practical verification + AI integration skills:
+
+- RTL-aware code generation for UVM-based environments
+- Python automation and clean CLI tooling
+- Coverage closure strategy and feedback-loop design
+- Risk-based verification prioritization
+- Test-driven implementation and reproducible output artifacts
+
+A ready-to-copy resume section is included in [`RESUME_ENTRY.md`](RESUME_ENTRY.md).
+
+---
+
+## Roadmap
+
+- Add transaction-level reference model synthesis from RTL expressions
+- Integrate simulator adapters (Questa/VCS/Xcelium) for one-command run
+- Add UCIS/coverage database parsing for real coverage closure loop
+- Add prompt templates for protocol-aware stimulus strategies
+
+---
+
+## License
+
+MIT
