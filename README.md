@@ -100,6 +100,16 @@ For module `alu`, the tool emits:
 
 ---
 
+
+## Sample Output Visuals
+
+### Generated Waveform (Illustrative)
+![Generated waveform example](assets/waveform_example.svg)
+
+### Generation Summary Snapshot
+![Generation summary snapshot](assets/output_summary.svg)
+
+---
 ## Optional LLM Mode
 
 Enable with:
