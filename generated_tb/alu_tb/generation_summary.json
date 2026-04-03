@@ -1,0 +1,44 @@
+{
+  "module": "alu",
+  "port_count": 8,
+  "sequence_counts": {
+    "smoke": 10,
+    "corner": 5,
+    "directed": 11
+  },
+  "coverage_loop": {
+    "iterations": 3,
+    "status": "completed",
+    "final_coverage": 87.0,
+    "added_vectors": [
+      {
+        "clk": 0,
+        "rst_n": 0,
+        "a": 0,
+        "b": 0,
+        "op": 6
+      },
+      {
+        "clk": 0,
+        "rst_n": 0,
+        "a": 0,
+        "b": 0,
+        "op": 7
+      },
+      {
+        "clk": 0,
+        "rst_n": 0,
+        "a": 255,
+        "b": 0,
+        "op": 0
+      }
+    ]
+  },
+  "bug_risk": {
+    "score": 0.5325,
+    "priority": "MEDIUM",
+    "reasons": [
+      "High input/output width ratio indicates datapath/control imbalance."
+    ]
+  }
+}

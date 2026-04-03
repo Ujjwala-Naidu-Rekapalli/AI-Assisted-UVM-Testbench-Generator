@@ -1,0 +1,16 @@
+# Generated run manifest for alu UVM TB
+# Risk priority: MEDIUM (score=0.532)
+
+Expected files:
+- alu_if.sv
+- alu_tb_pkg.sv
+- alu_tb_top.sv
+
+Compile order (example):
+1) <uvm_pkg>
+2) alu_if.sv
+3) alu_tb_pkg.sv
+4) <rtl file>
+5) alu_tb_top.sv
+
+Coverage-improvement directed vectors appended: 11

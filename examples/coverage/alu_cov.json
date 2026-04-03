@@ -1,0 +1,8 @@
+{
+  "total_coverage": 72.0,
+  "holes": [
+    {"signal": "op", "bin": "6", "hits": 0},
+    {"signal": "op", "bin": "7", "hits": 0},
+    {"signal": "a", "bin": "255", "hits": 1}
+  ]
+}
